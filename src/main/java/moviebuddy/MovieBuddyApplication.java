@@ -16,7 +16,6 @@ import java.util.stream.Stream;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import moviebuddy.domain.CsvMovieReader;
 import moviebuddy.domain.Movie;
 import moviebuddy.domain.MovieFinder;
 
