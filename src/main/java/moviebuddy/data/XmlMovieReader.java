@@ -1,18 +1,18 @@
 package moviebuddy.data;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import org.springframework.context.annotation.Profile;
+import org.springframework.oxm.Unmarshaller;
 import org.springframework.stereotype.Repository;
 
 import moviebuddy.ApplicationException;
@@ -22,23 +22,26 @@ import moviebuddy.domain.MovieReader;
 
 @Profile(MovieBuddyProfile.XML_MODE)
 @Repository
-public class JaxbMovieReader implements MovieReader{
+public class XmlMovieReader implements MovieReader{
 
+	private final Unmarshaller unmarshaller;
+	
+	//final 타입으로 선언했기 때문에 생성자를 통해 unmarshaller를 받아야 함.
+	public XmlMovieReader(Unmarshaller unmarshaller) {
+		this.unmarshaller = Objects.requireNonNull(unmarshaller);	// unmarshaller는 반드시 필요한 객체이기 때문에 Objects.requireNonNull 메소드 사용.
+	}
+	
 	@Override
 	public List<Movie> loadMovies() {
 		
-		try {
-			// 자바 클래스를 XML로 표현하는 자바 표준 API
-			final JAXBContext jaxb = JAXBContext.newInstance(MovieMetadata.class);
-			final Unmarshaller unmarshaller = jaxb.createUnmarshaller();
-			
+		try {		
 			final InputStream content = ClassLoader.getSystemResourceAsStream("movie_metadata.xml");
 			final Source source = new StreamSource(content);
 			// 언마샬링 : XML -> 자바객체
 			final MovieMetadata metadata = (MovieMetadata) unmarshaller.unmarshal(source);
 			
 			return metadata.toMovies();
-		} catch (JAXBException e) {
+		} catch (IOException e) {
 			throw new ApplicationException("failed to load movies data", e);
 		}
 	}
