@@ -8,15 +8,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import moviebuddy.MovieBuddyFactory;
+import moviebuddy.MovieBuddyProfile;
 
 /**
  * @author springrunner.kr@gmail.com
  */
+@ActiveProfiles(MovieBuddyProfile.CSV_MODE)
 @SpringJUnitConfig(MovieBuddyFactory.class)
 //@ExtendWith(SpringExtension.class)
 //@ContextConfiguration(classes = MovieBuddyFactory.class)
@@ -27,16 +30,16 @@ public class MovieFinderTest {
 	MovieFinder movieFinder;
 	
 	//생성자에 Autowired
-	@Autowired
-	MovieFinderTest(MovieFinder movieFinder) {
-		this.movieFinder = movieFinder;
-	}
+//	@Autowired
+//	MovieFinderTest(MovieFinder movieFinder) {
+//		this.movieFinder = movieFinder;
+//	}
 	
 	//세터에 Autowired
-	@Autowired
-	void setMovieFinder(MovieFinder movieFinder) {
-		this.movieFinder = movieFinder;
-	}
+//	@Autowired
+//	void setMovieFinder(MovieFinder movieFinder) {
+//		this.movieFinder = movieFinder;
+//	}
 	
 	@Test
 	void NotEmpty_directedBy() {
