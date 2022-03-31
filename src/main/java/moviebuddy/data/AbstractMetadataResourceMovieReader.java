@@ -12,15 +12,19 @@ import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 import moviebuddy.ApplicationException;
 
-public abstract class AbstractFileSystemMovieReader {
+public abstract class AbstractMetadataResourceMovieReader implements ResourceLoaderAware{
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
 	private String metadata;
+	private ResourceLoader resourceLoader;
 
-	public AbstractFileSystemMovieReader() {
+	public AbstractMetadataResourceMovieReader() {
 		super();
 	}
 
@@ -33,17 +37,29 @@ public abstract class AbstractFileSystemMovieReader {
 		this.metadata = Objects.requireNonNull(metadata, "metadata is required value");
 	}
 
+	@Override
+	public void setResourceLoader(ResourceLoader resourceLoader) {
+		this.resourceLoader = resourceLoader;
+	}
+
+	public Resource getMetadataResource() {
+		return resourceLoader.getResource(getMetadata());
+	}
+	
 	@PostConstruct
 	public void afterPropertiesSet() throws Exception {
-		URL metadataUrl = ClassLoader.getSystemResource(metadata);
+		// ClassLoader.getSystemResource() 클래스패스 상의 자원만 처리할 수 있다.
 		
-		if(Objects.isNull(metadataUrl)) {
+		Resource resource = getMetadataResource();
+		
+		if(!resource.exists()) {
 			throw new FileNotFoundException(metadata);
 		}
-		
-		if(Files.isReadable(Path.of(metadataUrl.toURI())) == false) {
+		if(!resource.isReadable()) {
 			throw new ApplicationException(String.format("cannot read to metadata. [%s]", metadata));
 		}
+
+		log.info(resource + " is ready.");
 	}
 
 	@PreDestroy
