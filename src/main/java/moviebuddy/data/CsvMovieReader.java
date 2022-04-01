@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.cache.annotation.CacheResult;
-
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 

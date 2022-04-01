@@ -54,7 +54,7 @@ public class MovieBuddyApplication {
             output.println("quit application.");
             running.set(false);
         });
-        // 감독으로 영화 검색:: ❯ directedBy Michael Bay
+        // 감독으로 영화 검색:: ❯ directedBy Michael BayO
         commandActions.put(Command.DirectedBy, arguments -> {
             String director = String.join(" ", arguments.subList(1, arguments.size()));
             if (director.isBlank()) {
