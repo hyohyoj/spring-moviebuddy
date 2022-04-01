@@ -4,11 +4,17 @@ import java.util.Objects;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.util.ClassUtils;
+
+import moviebuddy.domain.MovieReader;
 
 public class CachingAdvice implements MethodInterceptor{
 
+	private final Logger log = LoggerFactory.getLogger(getClass());
 	private final CacheManager cacheManager;
 	
 	public CachingAdvice(CacheManager cacheManager) {
@@ -21,6 +27,7 @@ public class CachingAdvice implements MethodInterceptor{
 		Cache cache = cacheManager.getCache(invocation.getThis().getClass().getName());	// 해당 객체의 클래스 이름으로 캐시 설정
 		Object cachedValue = cache.get(invocation.getMethod().getName(), Object.class);	// 메소드 이름으로 저장된 캐시 꺼냄
 		if(Objects.nonNull(cachedValue)) {
+			log.info("returns cached data. [{}]", invocation);
 			return cachedValue;
 		}
 		
@@ -28,6 +35,7 @@ public class CachingAdvice implements MethodInterceptor{
 		// 캐시된 데이터 없으면, 대상 객체에 명령을 위임하고, 반환된 값을 캐시에 저장 후 반환 처리
 		cachedValue = invocation.proceed();
 		cache.put(invocation.getMethod().getName(), cachedValue);
+		log.info("caching return value [{}]", invocation);
 		
 		return cachedValue;
 	}
