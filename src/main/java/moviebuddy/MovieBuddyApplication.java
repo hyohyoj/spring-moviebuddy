@@ -39,7 +39,7 @@ public class MovieBuddyApplication {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
 		messageSource.setBasename("messages");
 		messageSource.setDefaultEncoding("utf-8");
-		messageSource.setCacheSeconds(5);
+		messageSource.setCacheSeconds(5);	// 5초에 한 번씩 재로드 해옴.
 		
 		return messageSource;
 	}
